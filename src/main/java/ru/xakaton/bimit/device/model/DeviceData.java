@@ -8,6 +8,8 @@ import javax.persistence.Id;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import ru.xakaton.bimit.device.enums.DeviceState;
+
 @Entity
 public class DeviceData {
 	@Id
@@ -22,6 +24,8 @@ public class DeviceData {
 	@DateTimeFormat()
 	private java.sql.Timestamp time;
 
+	private DeviceState deviceState;
+	
 	public UUID getUuid() {
 		return uuid;
 	}
@@ -61,6 +65,15 @@ public class DeviceData {
 	public void setTime(java.sql.Timestamp time) {
 		this.time = time;
 	}
+
+	public DeviceState getDeviceState() {
+		return deviceState;
+	}
+
+	public void setDeviceState(DeviceState deviceState) {
+		this.deviceState = deviceState;
+	}
+	
 	
 	
 }
