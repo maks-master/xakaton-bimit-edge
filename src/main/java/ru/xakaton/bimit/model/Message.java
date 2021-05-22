@@ -10,7 +10,7 @@ public class Message {
 
 	private String sensorName;
 	private String sensorID;
-	private MessageTimestamp td;
+	private MessageTimestamp ts;
 	
 	public String getSensorName() {
 		return sensorName;
@@ -24,10 +24,11 @@ public class Message {
 	public void setSensorID(String sensorID) {
 		this.sensorID = sensorID;
 	}
-	public MessageTimestamp getTd() {
-		return td;
+	public MessageTimestamp getTs() {
+		return ts;
 	}
-	public void setTd(MessageTimestamp td) {
-		this.td = td;
+	public void setTs(MessageTimestamp ts) {
+		this.ts = ts;
 	}
+	
 }

@@ -20,13 +20,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class MessageService {
 
+	protected static Map<String, String> mapNames = new ConcurrentHashMap<String, String>();
 	
-	private Map<String, Queue<SimpleMessage>> queues = new ConcurrentHashMap<String, Queue<SimpleMessage>>();
+	protected static Map<String, Queue<SimpleMessage>> queues = new ConcurrentHashMap<String, Queue<SimpleMessage>>();
 	
-
-	public static boolean readerProcessStart = false;
-	public static LongActionThread readerThread;
-
 	public static boolean packProcessStart = false;
 	public static LongActionThread packThread;
 	
@@ -38,25 +35,20 @@ public class MessageService {
 	
 	public void queueMesage(Message message) {
 		String sensorId = message.getSensorID();
-
+		String sensorName = message.getSensorName();
+		mapNames.put(sensorId, sensorName);
+		
 		Queue<SimpleMessage> queue = queues.get(sensorId);
 		if (queue==null) queue = new ConcurrentLinkedQueue<SimpleMessage>();
 		
-		queue.add(new SimpleMessage(message.getTd().getData().getValue(), message.getTd().getTs().getTime()));
+		queue.add(new SimpleMessage(message.getTs().getData().getValue(), message.getTs().getTs().getTime()));
 		
 		return;
 	}
 	
-	
 
 	@PostConstruct
 	public void startService() {
-		if (!readerProcessStart) {
-			readerThread = applicationContext.getBean(ReaderThread.class);
-			taskExecutor.execute(readerThread);
-			readerProcessStart = true;
-		}
-		
 		if (!packProcessStart) {
 			packThread = applicationContext.getBean(PackThread.class);
 			taskExecutor.execute(packThread);

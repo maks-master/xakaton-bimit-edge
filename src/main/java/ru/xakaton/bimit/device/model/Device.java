@@ -33,6 +33,17 @@ public class Device {
 	private String elementId;
 	private String sensorId;
 
+	public Device() {
+		super();
+	}
+	
+	public Device(String name, String sensorId) {
+		super();
+		this.name = name;
+		this.sensorId = sensorId;
+		this.deviceState = DeviceState.ONLINE;
+	}
+
 	public UUID getUuid() {
 		return uuid;
 	}

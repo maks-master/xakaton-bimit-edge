@@ -1,5 +1,7 @@
 package ru.xakaton.bimit.device.model;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.UUID;
 
 import javax.persistence.Entity;
@@ -24,6 +26,19 @@ public class DeviceState {
 	private Double max;
 	private Double average;
 	private Double mediana;
+	
+	
+	
+	public DeviceState() {
+		super();
+	}
+
+	public DeviceState(UUID deviceUuid) {
+		super();
+		this.deviceUuid = deviceUuid;
+		this.time = new Timestamp(new Date().getTime());
+	}
+	
 	public UUID getUuid() {
 		return uuid;
 	}
