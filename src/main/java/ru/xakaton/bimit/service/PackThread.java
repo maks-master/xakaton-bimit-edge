@@ -147,7 +147,7 @@ public class PackThread extends LongActionThread {
 		try {
 			boolean notEndProcess = true;
 			while (notEndProcess) {
-				Thread.sleep(sleeptime * 100L);
+				Thread.sleep(sleeptime * 200L);
 				try {
 
 					initProcess();
