@@ -26,7 +26,7 @@ public class Alarm {
 	private java.sql.Timestamp time;
 	
 	@Column(columnDefinition = "text")
-	private String into;
+	private String info;
 
 	public UUID getUuid() {
 		return uuid;
@@ -52,14 +52,6 @@ public class Alarm {
 		this.time = time;
 	}
 
-	public String getInto() {
-		return into;
-	}
-
-	public void setInto(String into) {
-		this.into = into;
-	}
-
 	public UUID getDeviceUuid() {
 		return deviceUuid;
 	}
@@ -74,6 +66,14 @@ public class Alarm {
 
 	public void setDeviceDataUuid(UUID deviceDataUuid) {
 		this.deviceDataUuid = deviceDataUuid;
+	}
+
+	public String getInfo() {
+		return info;
+	}
+
+	public void setInfo(String info) {
+		this.info = info;
 	}
 	
 	
