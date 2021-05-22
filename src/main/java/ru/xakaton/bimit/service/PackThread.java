@@ -2,6 +2,9 @@ package ru.xakaton.bimit.service;
 
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -143,27 +146,38 @@ public class PackThread extends LongActionThread {
 		Set<DeviceData> fordel = state.values.parallelStream().filter(data -> data.getTime().before(new Timestamp(deviceData.getTime().getTime() - 60*1000L))).collect(Collectors.toSet());
 		state.values.removeAll(fordel);
 		state.values.add(deviceData);
-		
+		double[] vls = new double[state.values.size()];
 		double max = -Double.MAX_VALUE;
 		double min = Double.MAX_VALUE;
 		double sum = 0.0;
 		double cnt = 0.0;
 		double avg = 0.0;
-		double med = 0.0;
+		int i=0;
 		for (DeviceData data: state.values) {
 			cnt += data.getCount();
 			sum += data.getData()*data.getCount();
 			
 			if (data.getData()>=max) max = data.getData();
 			if (data.getData()<=min) min = data.getData();
+			vls[i++] = data.getData();
 		}
 		
 		avg = fastTrunc(sum/cnt, 2);
-		med = fastTrunc(sum/cnt, 2);
+		
+		Arrays.sort(vls);
+
+		double mediana;
+		int mitad = vls.length / 2;
+		if (vls.length % 2 == 0) {
+		    mediana = (vls[mitad - 1] + vls[mitad]) / 2;
+		} else {
+		    mediana = vls[mitad];
+		}
+		
 		state.setAverage(avg);
 		state.setMax(max);
 		state.setMin(min);
-		state.setMediana(med);
+		state.setMediana(mediana);
 		state.setTime(deviceData.getTime());
 		
 		deviceStateRepository.save(state);
