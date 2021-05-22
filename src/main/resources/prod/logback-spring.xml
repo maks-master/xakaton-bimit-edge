@@ -23,9 +23,9 @@
    </appender>
 
    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-      	<File>/opt/tomcat/logs/edge.log</File>
+      	<File>/usr/local/tomcat/logs/edge.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-    	<fileNamePattern>/opt/tomcat/logs/edge_%i.log</fileNamePattern>
+    	<fileNamePattern>/usr/local/tomcat/logs/edge_%i.log</fileNamePattern>
 	        <minIndex>1</minIndex>
             <maxIndex>3</maxIndex>
         </rollingPolicy>
