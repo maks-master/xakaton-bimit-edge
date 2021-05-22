@@ -22,7 +22,7 @@ public class MessageController {
 	@PostMapping("")
 	@Transactional(readOnly = true)
 	public void getMyProcess(@RequestBody Message message) {
-		messageService.packMesage(message);
+		messageService.queueMesage(message);
 	}
 	
 }
