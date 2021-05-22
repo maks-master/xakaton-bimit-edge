@@ -151,11 +151,31 @@ public class PackThread extends LongActionThread {
 				alarm.setDeviceUuid(deviceUuid);
 				
 				alarm.setAlarmLevel(AlarmLevel.WARNING);
-				if (doubleValue * 1.1 >= device.getMaxValue())
-					alarm.setAlarmLevel(AlarmLevel.ERROR);
-				if (doubleValue * 1.25 >= device.getMaxValue())
+				
+				if (doubleValue / 1.1 >= device.getMaxValue())
+					alarm.setAlarmLevel(AlarmLevel.ERROR);			
+				if (doubleValue / 1.25 >= device.getMaxValue())
 					alarm.setAlarmLevel(AlarmLevel.STRONG);
-				if (doubleValue * 1.5 >= device.getMaxValue())
+				if (doubleValue / 1.5 >= device.getMaxValue())
+					alarm.setAlarmLevel(AlarmLevel.CRITICAL);
+				
+				alarm.setTime(deviceData.getTime());
+				
+				alarmRepository.save(alarm);
+			}
+			
+			if ( device.getMinValue() != null && doubleValue < device.getMinValue()) {
+				Alarm alarm = new Alarm();
+				alarm.setDeviceDataUuid(deviceDataUuid);
+				alarm.setDeviceUuid(deviceUuid);
+				
+				alarm.setAlarmLevel(AlarmLevel.WARNING);
+				
+				if (doubleValue<= device.getMinValue() / 1.1 )
+					alarm.setAlarmLevel(AlarmLevel.ERROR);			
+				if (doubleValue <= device.getMinValue() / 1.25 )
+					alarm.setAlarmLevel(AlarmLevel.STRONG);
+				if (doubleValue <= device.getMinValue() / 1.5 )
 					alarm.setAlarmLevel(AlarmLevel.CRITICAL);
 				
 				alarm.setTime(deviceData.getTime());
