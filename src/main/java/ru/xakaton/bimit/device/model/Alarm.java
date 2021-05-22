@@ -15,6 +15,9 @@ public class Alarm {
 	@GeneratedValue
 	private UUID uuid;
 	
+	private UUID deviceUuid;
+	private UUID deviceDataUuid;
+	
 	private AlarmLevel alarmLevel;
 	
 	@DateTimeFormat()
@@ -53,6 +56,22 @@ public class Alarm {
 
 	public void setInto(String into) {
 		this.into = into;
+	}
+
+	public UUID getDeviceUuid() {
+		return deviceUuid;
+	}
+
+	public void setDeviceUuid(UUID deviceUuid) {
+		this.deviceUuid = deviceUuid;
+	}
+
+	public UUID getDeviceDataUuid() {
+		return deviceDataUuid;
+	}
+
+	public void setDeviceDataUuid(UUID deviceDataUuid) {
+		this.deviceDataUuid = deviceDataUuid;
 	}
 	
 	

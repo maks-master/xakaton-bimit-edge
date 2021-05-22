@@ -86,7 +86,7 @@ public class PackThread extends LongActionThread {
 	            			
 		            		doubleValue = Double.parseDouble(doubleVal);
 		            		
-		            		alertChech(doubleValue, device);
+		            		
 		            		
 		            		if (preDoubleValue == doubleValue) {
 		            			counter++;
@@ -95,6 +95,8 @@ public class PackThread extends LongActionThread {
 		            				deviceData.setDeviceState(device.getDeviceState());
 		            				deviceData.setCount(counter);
 		            				deviceDataRepository.save(deviceData);
+		            				
+		            				alertChech(doubleValue, device, deviceData);
 		            			}
 		            			counter = 0;
 		            		}
@@ -105,6 +107,7 @@ public class PackThread extends LongActionThread {
 			            		counter++;
 			            		preDoubleValue = doubleValue;
 			            	}
+		            		
 		            		
 		            		stateChech(doubleValue, device);
 	            		}
@@ -118,6 +121,8 @@ public class PackThread extends LongActionThread {
 				deviceData.setDeviceState(device.getDeviceState());
 				deviceData.setCount(counter);
 				deviceDataRepository.save(deviceData);
+				
+				alertChech(doubleValue, device, deviceData);
 			}
 		});
 	}
@@ -129,17 +134,14 @@ public class PackThread extends LongActionThread {
 
 	
 	
-	public void alertChech(double doubleValue, Device device) {
-		/*if (device.getMaxValue() != null || device.getMinValue()) {
+	public void alertChech(double doubleValue, Device device, DeviceData deviceData) {
+		if (device.getMaxValue() != null || device.getMinValue() != null) {
 			UUID deviceUuid = device.getUuid();
-			if (doubleValue < device.getMaxValue() != null ) {
+			if ( device.getMaxValue() != null && doubleValue > device.getMaxValue()) {
 				
 			}
 				
-		}*/
-		
-		
-		
+		}
 	}
 
 	public void run() {
