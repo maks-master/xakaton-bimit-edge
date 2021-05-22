@@ -77,29 +77,41 @@ public class PackThread extends LongActionThread {
 			while ( queue.size() > 0) {
 	            if ((massage = queue.poll()) != null) {
 	            	try {
-	            		doubleValue = Double.parseDouble(massage.getValue());
-	            		if (preDoubleValue == doubleValue) {
-	            			counter++;
-	            		} else {
-	            			if (counter != 0) {
-	            				deviceData.setDeviceState(device.getDeviceState());
-	            				deviceData.setCount(counter);
-	            				deviceDataRepository.save(deviceData);
-	            			}
-	            			counter = 0;
+	            		String doubleVal = massage.getValue();
+	            		if (doubleVal!=null && !doubleVal.equals("")) {
+	            			doubleVal = doubleVal.replace(',', '.');
+	            			
+		            		doubleValue = Double.parseDouble(doubleVal);
+
+		            		if (preDoubleValue == doubleValue) {
+		            			counter++;
+		            		} else {
+		            			if (counter != 0) {
+		            				deviceData.setDeviceState(device.getDeviceState());
+		            				deviceData.setCount(counter);
+		            				deviceDataRepository.save(deviceData);
+		            			}
+		            			counter = 0;
+		            		}
+		            		if (counter == 0) {
+		            			deviceData = new DeviceData(deviceUuid);
+			            		deviceData.setTime(new Timestamp(massage.getTs()));
+			            		deviceData.setData(doubleValue);
+			            		counter++;
+			            		preDoubleValue = doubleValue;
+			            	}
 	            		}
-	            		if (counter == 0) {
-	            			deviceData = new DeviceData(deviceUuid);
-		            		deviceData.setTime(new Timestamp(massage.getTs()));
-		            		deviceData.setData(doubleValue);
-		            		counter++;
-		            		preDoubleValue = doubleValue;
-		            	}
 	            	} catch (Exception e) {
 	            		log.error("parse error", e);
 	            	}
 	            }
 	        }
+			
+			if (deviceData != null) {
+				deviceData.setDeviceState(device.getDeviceState());
+				deviceData.setCount(counter);
+				deviceDataRepository.save(deviceData);
+			}
 		});
 	}
 
