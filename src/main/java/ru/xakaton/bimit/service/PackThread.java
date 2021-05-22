@@ -30,6 +30,9 @@ import ru.xakaton.bimit.model.SimpleMessage;
 public class PackThread extends LongActionThread {
 	public Logger log = LoggerFactory.getLogger(this.getClass().getName());
 	
+	protected static Map<UUID, Queue<Double>> alr = new ConcurrentHashMap<UUID, Queue<Double>>();
+	protected static Map<UUID, Queue<Double>> sts = new ConcurrentHashMap<UUID, Queue<Double>>();
+	
 	public static Map<UUID, DeviceState> states = new ConcurrentHashMap<UUID, DeviceState>();
 	
 	@Autowired
@@ -67,7 +70,7 @@ public class PackThread extends LongActionThread {
 				}
 			);
 			UUID deviceUuid = device.getUuid();
-			DeviceState state = states.get(deviceUuid);
+			
 			Queue<SimpleMessage> queue = entry.getValue();
 			SimpleMessage massage;
 			DeviceData deviceData = null;
@@ -82,7 +85,9 @@ public class PackThread extends LongActionThread {
 	            			doubleVal = doubleVal.replace(',', '.');
 	            			
 		            		doubleValue = Double.parseDouble(doubleVal);
-
+		            		
+		            		alertChech(doubleValue, device);
+		            		
 		            		if (preDoubleValue == doubleValue) {
 		            			counter++;
 		            		} else {
@@ -100,6 +105,8 @@ public class PackThread extends LongActionThread {
 			            		counter++;
 			            		preDoubleValue = doubleValue;
 			            	}
+		            		
+		            		stateChech(doubleValue, device);
 	            		}
 	            	} catch (Exception e) {
 	            		log.error("parse error", e);
@@ -113,6 +120,26 @@ public class PackThread extends LongActionThread {
 				deviceDataRepository.save(deviceData);
 			}
 		});
+	}
+	
+	public void stateChech(double doubleValue, Device device) {
+		UUID deviceUuid = device.getUuid();
+		//DeviceState state = states.get(deviceUuid);
+	}
+
+	
+	
+	public void alertChech(double doubleValue, Device device) {
+		/*if (device.getMaxValue() != null || device.getMinValue()) {
+			UUID deviceUuid = device.getUuid();
+			if (doubleValue < device.getMaxValue() != null ) {
+				
+			}
+				
+		}*/
+		
+		
+		
 	}
 
 	public void run() {
