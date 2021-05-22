@@ -16,9 +16,12 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ru.xakaton.bimit.device.enums.AlarmLevel;
+import ru.xakaton.bimit.device.model.Alarm;
 import ru.xakaton.bimit.device.model.Device;
 import ru.xakaton.bimit.device.model.DeviceData;
 import ru.xakaton.bimit.device.model.DeviceState;
+import ru.xakaton.bimit.device.repository.AlarmRepository;
 import ru.xakaton.bimit.device.repository.DeviceDataRepository;
 import ru.xakaton.bimit.device.repository.DeviceRepository;
 import ru.xakaton.bimit.device.repository.DeviceStateRepository;
@@ -34,6 +37,9 @@ public class PackThread extends LongActionThread {
 	protected static Map<UUID, Queue<Double>> sts = new ConcurrentHashMap<UUID, Queue<Double>>();
 	
 	public static Map<UUID, DeviceState> states = new ConcurrentHashMap<UUID, DeviceState>();
+	
+	@Autowired
+	AlarmRepository alarmRepository;
 	
 	@Autowired
 	DeviceRepository deviceRepository;
@@ -137,8 +143,24 @@ public class PackThread extends LongActionThread {
 	public void alertChech(double doubleValue, Device device, DeviceData deviceData) {
 		if (device.getMaxValue() != null || device.getMinValue() != null) {
 			UUID deviceUuid = device.getUuid();
+			UUID deviceDataUuid = deviceData.getUuid();
+			
 			if ( device.getMaxValue() != null && doubleValue > device.getMaxValue()) {
+				Alarm alarm = new Alarm();
+				alarm.setDeviceDataUuid(deviceDataUuid);
+				alarm.setDeviceUuid(deviceUuid);
 				
+				alarm.setAlarmLevel(AlarmLevel.WARNING);
+				if (doubleValue * 1.1 >= device.getMaxValue())
+					alarm.setAlarmLevel(AlarmLevel.ERROR);
+				if (doubleValue * 1.25 >= device.getMaxValue())
+					alarm.setAlarmLevel(AlarmLevel.STRONG);
+				if (doubleValue * 1.5 >= device.getMaxValue())
+					alarm.setAlarmLevel(AlarmLevel.CRITICAL);
+				
+				alarm.setTime(deviceData.getTime());
+				
+				alarmRepository.save(alarm);
 			}
 				
 		}
