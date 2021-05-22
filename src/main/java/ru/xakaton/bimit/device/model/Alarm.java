@@ -6,12 +6,16 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.Table;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
 import ru.xakaton.bimit.device.enums.AlarmLevel;
 
 @Entity
+@Table(indexes = { @Index(name = "idx_device", columnList = "deviceUuid"),
+				   @Index(name = "idx_deviceData", columnList = "deviceDataUuid")})
 public class Alarm {
 	@Id
 	@GeneratedValue

@@ -2,11 +2,14 @@ package ru.xakaton.bimit.device.model;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -27,7 +30,8 @@ public class DeviceState {
 	private Double average;
 	private Double mediana;
 	
-	
+	@Transient
+	public Set<DeviceData> values = new HashSet<DeviceData>();
 	
 	public DeviceState() {
 		super();

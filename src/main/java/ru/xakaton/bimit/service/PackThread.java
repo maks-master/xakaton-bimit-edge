@@ -4,8 +4,10 @@ package ru.xakaton.bimit.service;
 import java.sql.Timestamp;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
@@ -33,8 +35,8 @@ import ru.xakaton.bimit.model.SimpleMessage;
 public class PackThread extends LongActionThread {
 	public Logger log = LoggerFactory.getLogger(this.getClass().getName());
 	
-	protected static Map<UUID, Queue<Double>> alr = new ConcurrentHashMap<UUID, Queue<Double>>();
-	protected static Map<UUID, Queue<Double>> sts = new ConcurrentHashMap<UUID, Queue<Double>>();
+	//protected static Map<UUID, Queue<Double>> alr = new ConcurrentHashMap<UUID, Queue<Double>>();
+	//protected static Map<UUID, Queue<Double>> sts = new ConcurrentHashMap<UUID, Queue<Double>>();
 	
 	public static Map<UUID, DeviceState> states = new ConcurrentHashMap<UUID, DeviceState>();
 	
@@ -103,6 +105,8 @@ public class PackThread extends LongActionThread {
 		            				deviceDataRepository.save(deviceData);
 		            				
 		            				alertChech(doubleValue, device, deviceData);
+		            				
+		            				stateChech(doubleValue, device, deviceData);
 		            			}
 		            			counter = 0;
 		            		}
@@ -115,7 +119,7 @@ public class PackThread extends LongActionThread {
 			            	}
 		            		
 		            		
-		            		stateChech(doubleValue, device);
+		            		
 	            		}
 	            	} catch (Exception e) {
 	            		log.error("parse error", e);
@@ -133,9 +137,48 @@ public class PackThread extends LongActionThread {
 		});
 	}
 	
-	public void stateChech(double doubleValue, Device device) {
+	public void stateChech(double doubleValue, Device device, DeviceData deviceData) {
 		UUID deviceUuid = device.getUuid();
-		//DeviceState state = states.get(deviceUuid);
+		DeviceState state = states.get(deviceUuid);
+		Set<DeviceData> fordel = state.values.parallelStream().filter(data -> data.getTime().before(new Timestamp(deviceData.getTime().getTime() - 60*1000L))).collect(Collectors.toSet());
+		state.values.removeAll(fordel);
+		state.values.add(deviceData);
+		
+		double max = -Double.MAX_VALUE;
+		double min = Double.MAX_VALUE;
+		double sum = 0.0;
+		double cnt = 0.0;
+		double avg = 0.0;
+		double med = 0.0;
+		for (DeviceData data: state.values) {
+			cnt += data.getCount();
+			sum += data.getData()*data.getCount();
+			
+			if (data.getData()>=max) max = data.getData();
+			if (data.getData()<=min) min = data.getData();
+		}
+		
+		avg = fastTrunc(sum/cnt, 2);
+		med = fastTrunc(sum/cnt, 2);
+		state.setAverage(avg);
+		state.setMax(max);
+		state.setMin(min);
+		state.setMediana(med);
+		state.setTime(deviceData.getTime());
+		
+		deviceStateRepository.save(state);
+		
+	}
+	
+	public static double fastTrunc(double val, int precission) {
+		double pow = Math.pow(10, precission);
+		double d = val * pow;
+		if (d > 0)
+			d += 0.000001;
+		if (d < 0)
+			d -= 0.000001;
+		long x = Math.round(d);
+		return (double) x / pow;
 	}
 
 	
