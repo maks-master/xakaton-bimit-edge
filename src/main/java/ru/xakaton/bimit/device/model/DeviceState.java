@@ -9,58 +9,64 @@ import javax.persistence.Id;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-public class DeviceData {
+public class DeviceState {
+
 	@Id
 	@GeneratedValue
 	private UUID uuid;
 	
 	private UUID deviceUuid;
 	
-	private Double data;
-	private int count;
-	
 	@DateTimeFormat()
 	private java.sql.Timestamp time;
-
+	
+	private Double min;
+	private Double max;
+	private Double average;
+	private Double mediana;
 	public UUID getUuid() {
 		return uuid;
 	}
-
 	public void setUuid(UUID uuid) {
 		this.uuid = uuid;
 	}
-
 	public UUID getDeviceUuid() {
 		return deviceUuid;
 	}
-
 	public void setDeviceUuid(UUID deviceUuid) {
 		this.deviceUuid = deviceUuid;
 	}
-
-	public Double getData() {
-		return data;
-	}
-
-	public void setData(Double data) {
-		this.data = data;
-	}
-
-	public int getCount() {
-		return count;
-	}
-
-	public void setCount(int count) {
-		this.count = count;
-	}
-
 	public java.sql.Timestamp getTime() {
 		return time;
 	}
-
 	public void setTime(java.sql.Timestamp time) {
 		this.time = time;
 	}
+	public Double getMin() {
+		return min;
+	}
+	public void setMin(Double min) {
+		this.min = min;
+	}
+	public Double getMax() {
+		return max;
+	}
+	public void setMax(Double max) {
+		this.max = max;
+	}
+	public Double getAverage() {
+		return average;
+	}
+	public void setAverage(Double average) {
+		this.average = average;
+	}
+	public Double getMediana() {
+		return mediana;
+	}
+	public void setMediana(Double mediana) {
+		this.mediana = mediana;
+	}
+	
 	
 	
 }
