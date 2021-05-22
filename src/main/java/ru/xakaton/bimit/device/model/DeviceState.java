@@ -21,6 +21,7 @@ public class DeviceState {
 	private UUID uuid;
 	
 	private UUID deviceUuid;
+	private UUID alarmUuid;
 	
 	@DateTimeFormat()
 	private java.sql.Timestamp time;
@@ -43,6 +44,14 @@ public class DeviceState {
 		this.time = new Timestamp(new Date().getTime());
 	}
 	
+	public UUID getAlarmUuid() {
+		return alarmUuid;
+	}
+
+	public void setAlarmUuid(UUID alarmUuid) {
+		this.alarmUuid = alarmUuid;
+	}
+
 	public UUID getUuid() {
 		return uuid;
 	}

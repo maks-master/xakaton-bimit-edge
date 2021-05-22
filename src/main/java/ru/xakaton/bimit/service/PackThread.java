@@ -107,9 +107,9 @@ public class PackThread extends LongActionThread {
 		            				deviceData.setCount(counter);
 		            				deviceDataRepository.save(deviceData);
 		            				
-		            				alertChech(doubleValue, device, deviceData);
+		            				Alarm alarm = alertChech(doubleValue, device, deviceData);
 		            				
-		            				stateChech(doubleValue, device, deviceData);
+		            				stateChech(doubleValue, device, deviceData, alarm);
 		            			}
 		            			counter = 0;
 		            		}
@@ -135,12 +135,14 @@ public class PackThread extends LongActionThread {
 				deviceData.setCount(counter);
 				deviceDataRepository.save(deviceData);
 				
-				alertChech(doubleValue, device, deviceData);
+				Alarm alarm = alertChech(doubleValue, device, deviceData);
+				
+				stateChech(doubleValue, device, deviceData, alarm);
 			}
 		});
 	}
 	
-	public void stateChech(double doubleValue, Device device, DeviceData deviceData) {
+	public void stateChech(double doubleValue, Device device, DeviceData deviceData, Alarm alarm) {
 		UUID deviceUuid = device.getUuid();
 		DeviceState state = states.get(deviceUuid);
 		Set<DeviceData> fordel = state.values.parallelStream().filter(data -> data.getTime().before(new Timestamp(deviceData.getTime().getTime() - 60*1000L))).collect(Collectors.toSet());
@@ -180,6 +182,12 @@ public class PackThread extends LongActionThread {
 		state.setMediana(mediana);
 		state.setTime(deviceData.getTime());
 		
+		if (alarm != null) {
+			state.setAlarmUuid(alarm.getUuid());
+		} else {
+			DeviceState baseState = deviceStateRepository.findFirstByDeviceUuid(deviceUuid).orElse(null);
+			if (baseState != null) state.setAlarmUuid(baseState.getAlarmUuid());
+		}
 		deviceStateRepository.save(state);
 		
 	}
@@ -197,7 +205,7 @@ public class PackThread extends LongActionThread {
 
 	
 	
-	public void alertChech(double doubleValue, Device device, DeviceData deviceData) {
+	public Alarm alertChech(double doubleValue, Device device, DeviceData deviceData) {
 		if (device.getMaxValue() != null || device.getMinValue() != null) {
 			UUID deviceUuid = device.getUuid();
 			UUID deviceDataUuid = deviceData.getUuid();
@@ -218,7 +226,7 @@ public class PackThread extends LongActionThread {
 				
 				alarm.setTime(deviceData.getTime());
 				
-				alarmRepository.save(alarm);
+				return alarmRepository.save(alarm);
 			}
 			
 			if ( device.getMinValue() != null && doubleValue < device.getMinValue()) {
@@ -237,10 +245,11 @@ public class PackThread extends LongActionThread {
 				
 				alarm.setTime(deviceData.getTime());
 				
-				alarmRepository.save(alarm);
+				return alarmRepository.save(alarm);
 			}
 				
 		}
+		return null;
 	}
 
 	public void run() {
