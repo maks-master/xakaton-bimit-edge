@@ -20,3 +20,24 @@ docker run -e BROKER=tcp://path_to_broker:1883 -e DATABASE=//IP_ADRESS:5432/xaka
 ```
 docker run --name docker-xakaton-edge -e BROKER=tcp://path_to_broker:1883 -e DATABASE=//IP_ADRESS:5432/xakaton --rm -d -v ./logs:/usr/local/tomcat/logs  docker.pkg.github.com/maks-master/xakaton-bimit-edge/docker-xakaton-edge:work
 ```
+
+
+## Сборка проекта
+
+Клонируем
+```
+git clone https://github.com/maks-master/xakaton-bimit-edge.git
+```
+```
+cd ./xakaton-bimit-edge
+```
+Сборка
+```
+mvn clean package -Pprod
+```
+Результат
+```
+./xakaton-bimit-edge/target/edge.war
+```
+
+Используем сборку Dockerfile
